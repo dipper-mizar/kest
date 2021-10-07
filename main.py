@@ -1,26 +1,54 @@
-from webob import Request, Response
-from webob.dec import wsgify
 from paste.deploy import loadapp
-
 from wsgiref.simple_server import make_server
 
 import os
 
-
-# @wsgify
-def application(environ, start_response):
-    start_response('200 OK', [('Content-Type', 'text/plain')])
-    return [b'HELLO WORLD!']
-    # return Response('hello world!\n')
+import wsgi
 
 
-def app_factory(global_config, **local_config):
-    return application
+class Controller(object):
+    def __init__(self):
+        pass
+
+    def test(self, req):
+        print('req: ', req)
+        return [b'Hello World']
+
+
+class MyRouterApp(wsgi.Router):
+    def __init__(self, mapper):
+        controller = Controller()
+        mapper.connect('/test', controller=wsgi.Resource(controller), action='test', conditions={'method': ['GET']})
+        super(MyRouterApp, self).__init__(mapper)
+
+
+# class ShowVersion(object):
+#     '''
+#     app
+#     '''
+#
+#     def __init__(self, version):
+#         self.version = version
+#
+#     def __call__(self, environ, start_response):
+#         res = Response()
+#         res.status = '200 OK'
+#         res.content_type = "text/plain"
+#         content = []
+#         content.append("%s\n" % self.version)
+#         res.body = '\n'.join(content)
+#         return res(environ, start_response)
+
+    # @classmethod
+    # def factory(cls, global_conf, **kwargs):
+    #     print('factory')
+    #     print('kwargs:', kwargs)
+    #     return ShowVersion(kwargs['version'])
 
 
 if __name__ == '__main__':
     configname = 'paste.ini'
-    appname = 'main'
+    appname = 'common'
 
     print('listen on 8000...')
 
