@@ -1,4 +1,4 @@
-from webob import Request, Response
+from webob import Response
 from webob.dec import wsgify
 from paste.deploy import loadapp
 
@@ -7,11 +7,9 @@ from wsgiref.simple_server import make_server
 import os
 
 
-# @wsgify
-def application(environ, start_response):
-    start_response('200 OK', [('Content-Type', 'text/plain')])
-    return [b'HELLO WORLD!']
-    # return Response('hello world!\n')
+@wsgify
+def application(req):
+    return Response('hello world!\n')
 
 
 def app_factory(global_config, **local_config):
